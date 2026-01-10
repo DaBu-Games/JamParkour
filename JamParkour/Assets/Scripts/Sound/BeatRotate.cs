@@ -4,48 +4,42 @@ public class BeatRotate : MonoBehaviour
 {
     [SerializeField] private float maxRotation = 40f;
     [SerializeField] private float rotateSpeed = 8f;
-    [SerializeField] private bool moveToBeat = true;
+    [SerializeField] private Axis chosenAxis;
+    [SerializeField] private float direction = 1f;
 
     private Quaternion startRotation;
     private Quaternion targetRotation;
-    private Vector3 chosenAxis;
-    private float timer = 0f;
-    
-    public void SetMoveToBeat() => moveToBeat = false;
+
+    private Vector3 axis;
+    private int lastBeat = -1;
 
     void Start()
     {
         startRotation = transform.localRotation;
         targetRotation = startRotation;
         
-        Vector3[] axes = { Vector3.right, Vector3.up, Vector3.forward };
-        chosenAxis = axes[Random.Range(0, axes.Length)];
+        axis = AxisUtils.ToVector(chosenAxis);
     }
 
     void Update()
     {
-        if (moveToBeat)
+        if (FMODMusicEvents.inBeatWindow)
         {
-            if (FMODMusicEvents.inBeatWindow)
+            int currentBeat = FMODMusicEvents.currentBeat;
+            
+            if (currentBeat != lastBeat)
             {
-                bool isEvenBeat = FMODMusicEvents.currentBeat % 2 == 0;
-                float direction = isEvenBeat ? -1f : 1f;
+                lastBeat = currentBeat;
 
-                targetRotation = startRotation * Quaternion.AngleAxis(maxRotation * direction, chosenAxis);
-            }
-            else
-            {
-                targetRotation = startRotation;
+                direction *= -1f;
+                targetRotation = startRotation * Quaternion.AngleAxis(maxRotation * direction, axis);
             }
         }
         else
         {
-            timer += Time.deltaTime;
-            float angle = Mathf.Sin(timer * rotateSpeed) * maxRotation;
-            targetRotation = startRotation * Quaternion.AngleAxis(angle, chosenAxis);
+            targetRotation = startRotation;
         }
-
-        // Smoothly rotate
+        
         transform.localRotation = Quaternion.RotateTowards(
             transform.localRotation,
             targetRotation,

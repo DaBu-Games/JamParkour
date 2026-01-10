@@ -4,47 +4,42 @@ public class BeatMover : MonoBehaviour
 {
     [SerializeField] private float moveDistance = 1f;
     [SerializeField] private float moveSpeed = 8f;
-    [SerializeField] private bool moveToBeat = true;
+    [SerializeField] private Axis chosenAxis;
+    [SerializeField] private float direction = 1f;
 
     private Vector3 startPos;
     private Vector3 targetPos;
-    private Vector3 chosenAxis;
-    private float timer = 0f;
     
-    public void SetMoveToBeat() => moveToBeat = false;
+    private Vector3 axis;
+    private int lastBeat = -1;
 
     void Start()
     {
         startPos = transform.position;
         targetPos = startPos;
         
-        Vector3[] axes = { Vector3.right, Vector3.forward };
-        chosenAxis = axes[Random.Range(0, axes.Length)];
+        axis = AxisUtils.ToVector(chosenAxis);
     }
 
     void Update()
     {
-        if (moveToBeat)
+        if (FMODMusicEvents.inBeatWindow)
         {
-            if (FMODMusicEvents.inBeatWindow)
-            {
-                bool isEvenBeat = FMODMusicEvents.currentBeat % 2 == 0;
+            int currentBeat = FMODMusicEvents.currentBeat;
 
-                Vector3 direction = isEvenBeat ? chosenAxis : -chosenAxis;
-                targetPos = startPos + direction * moveDistance;
-            }
-            else
+            if (currentBeat != lastBeat)
             {
-                targetPos = startPos;
+                lastBeat = currentBeat;
+
+                direction *= -1f;
+                targetPos = startPos + axis * (direction * moveDistance);
             }
         }
         else
         {
-            timer += Time.deltaTime;
-            float offset = Mathf.Sin(timer * moveSpeed) * moveDistance;
-            targetPos = startPos + chosenAxis * offset;
+            targetPos = startPos;
         }
-
+        
         transform.position = Vector3.Lerp(
             transform.position,
             targetPos,
