@@ -47,6 +47,16 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public void Launch(Vector3 direction, float force)
+    {
+        direction.Normalize();
+        
+        if (_velocity.y < 0f)
+            _velocity.y = 0f;
+
+        _velocity += direction * force;
+    }
+
     public void OnLook(InputAction.CallbackContext context)
     {
         Vector2 lookInput = context.ReadValue<Vector2>();
