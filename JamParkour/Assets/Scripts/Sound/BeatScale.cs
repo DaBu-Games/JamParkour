@@ -4,43 +4,47 @@ public class BeatScale : MonoBehaviour
 {
     [SerializeField] private float maxScale = 1.5f;
     [SerializeField] private float scaleSpeed = 8f;
-    [SerializeField] private bool moveToBeat = true;
+    [SerializeField] private bool startAtMax = false;
 
     private Vector3 startScale;
     private Vector3 targetScale;
-    private float timer = 0f;
     
-    public void SetMoveToBeat() => moveToBeat = false;
+    private int lastBeat = -1;
 
     void Start()
     {
         startScale = transform.localScale;
-        targetScale = startScale;
+
+        if (startAtMax)
+        {
+            transform.localScale = startScale * maxScale;
+            targetScale = startScale;
+        }
+        else
+        {
+            targetScale = startScale * maxScale;
+        }
+        
     }
 
     void Update()
     {
-        if (moveToBeat)
+        if (FMODMusicEvents.inBeatWindow)
         {
-            if (FMODMusicEvents.inBeatWindow)
+            int currentBeat = FMODMusicEvents.currentBeat;
+
+            if (currentBeat != lastBeat)
             {
-                bool isEvenBeat = FMODMusicEvents.currentBeat % 2 == 0;
-                targetScale = isEvenBeat ? startScale * maxScale : startScale;
-            }
-            else
-            {
-                targetScale = startScale;
+                lastBeat = currentBeat;
+                
+                targetScale = (targetScale == startScale) ? startScale * maxScale : startScale;
             }
         }
         else
         {
-            timer += Time.deltaTime;
-            
-            float scaleFactor = 1f + Mathf.Sin(timer * scaleSpeed) * (maxScale - 1f);
-            targetScale = startScale * scaleFactor;
+            targetScale = startScale;
         }
-
-        // Smoothly interpolate scale
+        
         transform.localScale = Vector3.Lerp(
             transform.localScale,
             targetScale,
