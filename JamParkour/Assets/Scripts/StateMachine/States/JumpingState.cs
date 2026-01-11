@@ -18,7 +18,11 @@ public class JumpingState : IState
     }
 
     public void OnExitState() { }
+
     public void OnUpdate() { }
 
-    public void OnFixedUpdate() { }
+    public void OnFixedUpdate()
+    {
+        _player.Controller.Move(_player.Velocity * Time.deltaTime);
+    }
 }

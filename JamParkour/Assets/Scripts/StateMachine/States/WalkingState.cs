@@ -13,16 +13,19 @@ public class WalkingState : IState
     public void OnEnterState() { }
 
     public void OnExitState() { }
-    public void OnUpdate() { }
+
+    public void OnUpdate(){}
 
     public void OnFixedUpdate()
     {
-        Walking();
+        Move();
     }
 
-    private void Walking()
+    private void Move()
     {
         Vector3 move = _player.transform.right * _player.MoveInput.x + _player.transform.forward * _player.MoveInput.y;
+        
+        move.y = -2f;
         
         _player.Controller.Move(move * (_speed * Time.deltaTime));
     }

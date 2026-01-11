@@ -28,7 +28,5 @@ public class LaunchedState : IState
         
         if (_player.Velocity.y < 0f)
             _player.Velocity.y = 0f;
-        
-        Debug.Log("launch");
     }
 }

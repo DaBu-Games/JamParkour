@@ -13,7 +13,7 @@ public class PlayerController : MonoBehaviour
     public bool IsHoldingJump;
     public bool IsJumping;
     public float LastPressedJumpTime;
-    public bool IsSprinting {get; private set;}
+    public bool IsHoldingRun {get; private set;}
 
     public Vector3 LaunchDirection;
     public float LaunchForce;
@@ -25,8 +25,6 @@ public class PlayerController : MonoBehaviour
     private void Start()
     { 
         Controller = GetComponent<CharacterController>();
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
     }
 
     private void Update()
@@ -55,7 +53,7 @@ public class PlayerController : MonoBehaviour
 
     public void OnSprint(InputAction.CallbackContext context)
     {
-        IsSprinting = context.performed;
+        IsHoldingRun = context.performed;
     }
 
     public void Launch(Vector3 launchDir, float launchForce)
@@ -64,7 +62,7 @@ public class PlayerController : MonoBehaviour
         LaunchForce = launchForce;
     }
     
-    private bool CanBufferJump()
+    public bool CanBufferJump()
     {
         return Time.time - _lastOnGroundTime <= _values.LeaveGroundBufferTime;
     }
