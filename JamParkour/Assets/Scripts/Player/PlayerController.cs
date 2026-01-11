@@ -29,7 +29,7 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        if(Controller.isGrounded)
+        if (Controller.isGrounded)
             _lastOnGroundTime = Time.time;
     }
 

@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerValues
   WalkSpeed: 6
   RunSpeed: 12
-  JumpInputBufferTime: 2
+  JumpInputBufferTime: 0.15
   LeaveGroundBufferTime: 0.15
   JumpHeight: 1.5
   Gravity: -9.81
-  FallingGravity: -12.85
+  FallingGravity: -20
   Drag: 10

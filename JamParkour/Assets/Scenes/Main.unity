@@ -527,7 +527,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraController
   cameraTransform: {fileID: 330585546}
-  mouseSensitivity: 40
+  mouseSensitivity: 20
 --- !u!1 &67232174
 GameObject:
   m_ObjectHideFlags: 0
@@ -2893,6 +2893,14 @@ PrefabInstance:
     - target: {fileID: 2414659868041707236, guid: e4faf6f5fb8ebff4bb29c4b7bc24b711, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3375987595622304166, guid: e4faf6f5fb8ebff4bb29c4b7bc24b711, type: 3}
+      propertyPath: m_TagString
+      value: Platform
+      objectReference: {fileID: 0}
+    - target: {fileID: 7869498545235829083, guid: e4faf6f5fb8ebff4bb29c4b7bc24b711, type: 3}
+      propertyPath: m_TagString
+      value: Platform
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
