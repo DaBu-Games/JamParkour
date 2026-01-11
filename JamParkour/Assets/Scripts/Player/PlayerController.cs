@@ -1,107 +1,76 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private Transform cameraTransform;
+    [SerializeField] private PlayerValues _values;
+    public CharacterController Controller {get; private set;}
+    public Vector2 MoveInput {get; private set;}
     
-    [Header("Movement values")]
-    [SerializeField] private float moveSpeed = 6f;
-    [SerializeField] private float sprintMultiplier = 2f;
-    [SerializeField] private float jumpHeight = 1.5f;
-    [SerializeField] private float gravity = -9.81f;
-    [SerializeField] private float drag = 10f;
-    
-    [Header("Look")]
-    [SerializeField] private float mouseSensitivity = 100f;
-    
-    private CharacterController _controller;
-    private Vector2 _moveInput;
-    private Vector3 _velocity;
-    private Vector3 _impulseVelocity;
-    private bool _isSprinting;
-    private float _xRotation;
+    public bool IsHoldingJump;
+    public bool IsJumping;
+    public float LastPressedJumpTime;
+    public bool IsSprinting {get; private set;}
+
+    public Vector3 LaunchDirection;
+    public float LaunchForce;
+    public Vector3 Velocity;
+    public Vector3 ImpulseVelocity;
+
+    private float _lastOnGroundTime = 0f;
 
     private void Start()
-    {
-        _controller = GetComponent<CharacterController>();
+    { 
+        Controller = GetComponent<CharacterController>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 
-    public void Update()
+    private void Update()
     {
-        HandleMovement();
+        if(Controller.isGrounded)
+            _lastOnGroundTime = Time.time;
     }
 
     public void OnMove(InputAction.CallbackContext context)
     {
-        _moveInput = context.ReadValue<Vector2>();
+        MoveInput = context.ReadValue<Vector2>();
     }
 
     public void OnJump(InputAction.CallbackContext context)
     {
-        if (context.performed && _controller.isGrounded)
+        if ( context.started )
         {
-            _velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+            IsHoldingJump = true;
+            LastPressedJumpTime = Time.time;
         }
-    }
-
-    public void Launch(Vector3 direction, float force)
-    {
-        direction.Normalize();
-
-        _impulseVelocity += direction * force;
-        
-        if (_velocity.y < 0f)
-            _velocity.y = 0f;
-        
-        Debug.Log("launch");
-    }
-
-    public void OnLook(InputAction.CallbackContext context)
-    {
-        Vector2 lookInput = context.ReadValue<Vector2>();
-        
-        float mouseX = lookInput.x * mouseSensitivity * Time.deltaTime;
-        float mouseY = lookInput.y * mouseSensitivity * Time.deltaTime;
-
-        _xRotation -= mouseY;
-        _xRotation = Mathf.Clamp(_xRotation, -90f, 90f);
-
-        cameraTransform.localRotation = Quaternion.Euler(_xRotation, 0f, 0f);
-        transform.Rotate(Vector3.up * mouseX);
+        else if (context.canceled)
+        {
+            IsHoldingJump = false;
+        }
     }
 
     public void OnSprint(InputAction.CallbackContext context)
     {
-        _isSprinting = context.performed;
+        IsSprinting = context.performed;
+    }
+
+    public void Launch(Vector3 launchDir, float launchForce)
+    {
+        LaunchDirection = launchDir.normalized;
+        LaunchForce = launchForce;
     }
     
-    void HandleMovement()
+    private bool CanBufferJump()
     {
-        Vector3 move = transform.right * _moveInput.x + transform.forward * _moveInput.y;
-        
-        float speed = _isSprinting ? moveSpeed * sprintMultiplier : moveSpeed;
-        
-        _controller.Move(move * (speed * Time.deltaTime));
+        return Time.time - _lastOnGroundTime <= _values.LeaveGroundBufferTime;
+    }
 
-        if (_controller.isGrounded && _velocity.y < 0)
-            _velocity.y = -2f;
-
-        _velocity.y += gravity * Time.deltaTime;
-        
-        _controller.Move(_impulseVelocity * Time.deltaTime);
-        
-        _impulseVelocity = Vector3.Lerp(
-            _impulseVelocity,
-            Vector3.zero,
-            Time.deltaTime * drag
-        );
-        
-        
-        _controller.Move(_velocity * Time.deltaTime);
+    public bool IsJumpBufferd()
+    {
+        return Time.time - LastPressedJumpTime <= _values.JumpInputBufferTime && Time.time > _values.JumpInputBufferTime;
     }
 }
