@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float sprintMultiplier = 2f;
     [SerializeField] private float jumpHeight = 1.5f;
     [SerializeField] private float gravity = -9.81f;
+    [SerializeField] private float drag = 10f;
     
     [Header("Look")]
     [SerializeField] private float mouseSensitivity = 100f;
@@ -19,6 +20,7 @@ public class PlayerController : MonoBehaviour
     private CharacterController _controller;
     private Vector2 _moveInput;
     private Vector3 _velocity;
+    private Vector3 _impulseVelocity;
     private bool _isSprinting;
     private float _xRotation;
 
@@ -45,6 +47,18 @@ public class PlayerController : MonoBehaviour
         {
             _velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
         }
+    }
+
+    public void Launch(Vector3 direction, float force)
+    {
+        direction.Normalize();
+
+        _impulseVelocity += direction * force;
+        
+        if (_velocity.y < 0f)
+            _velocity.y = 0f;
+        
+        Debug.Log("launch");
     }
 
     public void OnLook(InputAction.CallbackContext context)
@@ -78,6 +92,16 @@ public class PlayerController : MonoBehaviour
             _velocity.y = -2f;
 
         _velocity.y += gravity * Time.deltaTime;
+        
+        _controller.Move(_impulseVelocity * Time.deltaTime);
+        
+        _impulseVelocity = Vector3.Lerp(
+            _impulseVelocity,
+            Vector3.zero,
+            Time.deltaTime * drag
+        );
+        
+        
         _controller.Move(_velocity * Time.deltaTime);
     }
 }
