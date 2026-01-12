@@ -11,7 +11,7 @@ public class PlayerValues : ScriptableObject
     public float RunSpeed = 2f;
     public float JumpInputBufferTime = 0.15f;
     public float LeaveGroundBufferTime = 0.15f;
-    public float JumpHeight = 1.5f;
+    [FormerlySerializedAs("JumpHeight")] public float JumpForce = 1.5f;
     public float Gravity = -9.81f;
     public float FallingGravity = -12.85f;
     public float Drag = 10f;

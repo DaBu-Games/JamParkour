@@ -3,34 +3,24 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
 
-[RequireComponent(typeof(CharacterController))]
+[RequireComponent(typeof(Rigidbody))]
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private PlayerValues _values;
-    public CharacterController Controller {get; private set;}
+    [SerializeField] private GroundCheck _groundCheck;
+    public Rigidbody RB {get; private set;}
     public Vector2 MoveInput {get; private set;}
     
     public bool IsHoldingJump;
     public bool IsJumping;
     public float LastPressedJumpTime;
     public bool IsHoldingRun {get; private set;}
-
-    public Vector3 LaunchDirection;
-    public float LaunchForce;
-    public Vector3 Velocity;
-    public Vector3 ImpulseVelocity;
-
-    private float _lastOnGroundTime = 0f;
+    
+    public bool IsGrounded => _groundCheck.IsGrounded;
 
     private void Start()
     { 
-        Controller = GetComponent<CharacterController>();
-    }
-
-    private void Update()
-    {
-        if (Controller.isGrounded)
-            _lastOnGroundTime = Time.time;
+        RB = GetComponent<Rigidbody>();
     }
 
     public void OnMove(InputAction.CallbackContext context)
@@ -58,13 +48,19 @@ public class PlayerController : MonoBehaviour
 
     public void Launch(Vector3 launchDir, float launchForce)
     {
-        LaunchDirection = launchDir.normalized;
-        LaunchForce = launchForce;
+        launchDir.Normalize();
+        
+        if ( RB.linearVelocity.y < 0)
+        {
+            launchForce -= RB.linearVelocity.y;
+        }
+        
+        RB.AddForce(launchDir * launchForce, ForceMode.Impulse);
     }
     
     public bool CanBufferJump()
     {
-        return Time.time - _lastOnGroundTime <= _values.LeaveGroundBufferTime;
+        return Time.time - _groundCheck.LastOnGroundTime <= _values.LeaveGroundBufferTime;
     }
 
     public bool IsJumpBufferd()

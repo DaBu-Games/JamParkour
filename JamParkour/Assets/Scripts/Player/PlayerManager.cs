@@ -11,7 +11,6 @@ public class PlayerManager : MonoBehaviour
     private IdleState idleState;
     private InAirState inAirState;
     private JumpingState jumpingState;
-    private LaunchedState launchedState;
     private RunningState runningState;
     private WalkingState walkingState;
 
@@ -22,7 +21,6 @@ public class PlayerManager : MonoBehaviour
         idleState = new IdleState(player);
         inAirState = new InAirState(player, playerValues);
         jumpingState = new JumpingState(player, playerValues);
-        launchedState = new LaunchedState(player);
         runningState = new RunningState(player, playerValues);
         walkingState = new WalkingState(player, playerValues);
         
@@ -30,19 +28,13 @@ public class PlayerManager : MonoBehaviour
         stateMachine.AddTransition(new Transition(
             idleState,
             inAirState,
-            () => !player.Controller.isGrounded
+            () => !player.IsGrounded
         ));
         
         stateMachine.AddTransition(new Transition(
             idleState,
             jumpingState,
             () => player.IsJumpBufferd() && player.CanBufferJump()
-        ));
-        
-        stateMachine.AddTransition(new Transition(
-            idleState,
-            launchedState,
-            () => player.LaunchDirection != Vector3.zero
         ));
         
         stateMachine.AddTransition(new Transition(
@@ -61,7 +53,7 @@ public class PlayerManager : MonoBehaviour
         stateMachine.AddTransition(new Transition(
             inAirState,
             idleState,
-            () => player.Controller.isGrounded && player.MoveInput == Vector2.zero
+            () => player.IsGrounded && player.MoveInput == Vector2.zero
         ));
         
         stateMachine.AddTransition(new Transition(
@@ -73,33 +65,21 @@ public class PlayerManager : MonoBehaviour
         stateMachine.AddTransition(new Transition(
             inAirState,
             walkingState,
-            () => player.Controller.isGrounded && player.MoveInput != Vector2.zero
+            () => player.IsGrounded && player.MoveInput != Vector2.zero
         ));
         
         stateMachine.AddTransition(new Transition(
             inAirState,
             runningState,
-            () => player.Controller.isGrounded && player.MoveInput != Vector2.zero && player.IsHoldingRun
+            () => player.IsGrounded && player.MoveInput != Vector2.zero && player.IsHoldingRun
         ));
         
-        stateMachine.AddTransition(new Transition(
-            inAirState,
-            launchedState,
-            () => player.LaunchDirection != Vector3.zero
-        ));
         
         // jumping transition
         stateMachine.AddTransition(new Transition(
             jumpingState,
             inAirState,
-            () => !player.Controller.isGrounded
-        ));
-        
-        // launched transition
-        stateMachine.AddTransition(new Transition(
-            launchedState,
-            inAirState,
-            () => !player.Controller.isGrounded && player.ImpulseVelocity != Vector3.zero
+            () => !player.IsGrounded
         ));
         
         // running transition
@@ -118,13 +98,7 @@ public class PlayerManager : MonoBehaviour
         stateMachine.AddTransition(new Transition(
             runningState,
             inAirState,
-            () => !player.Controller.isGrounded
-        ));
-        
-        stateMachine.AddTransition(new Transition(
-            runningState,
-            launchedState,
-            () => player.LaunchDirection != Vector3.zero
+            () => !player.IsGrounded
         ));
         
         stateMachine.AddTransition(new Transition(
@@ -149,13 +123,7 @@ public class PlayerManager : MonoBehaviour
         stateMachine.AddTransition(new Transition(
             walkingState,
             inAirState,
-            () => !player.Controller.isGrounded
-        ));
-        
-        stateMachine.AddTransition(new Transition(
-            walkingState,
-            launchedState,
-            () => player.LaunchDirection != Vector3.zero
+            () => !player.IsGrounded
         ));
         
         stateMachine.AddTransition(new Transition(

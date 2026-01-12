@@ -23,10 +23,12 @@ public class WalkingState : IState
 
     private void Move()
     {
-        Vector3 move = _player.transform.right * _player.MoveInput.x + _player.transform.forward * _player.MoveInput.y;
-        
-        move.y = -2f;
-        
-        _player.Controller.Move(move * (_speed * Time.deltaTime));
+        Vector3 input = _player.transform.right * _player.MoveInput.x + _player.transform.forward * _player.MoveInput.y;
+
+        Vector3 velocity = _player.RB.linearVelocity;
+        velocity.x = input.x * _speed;
+        velocity.z = input.z * _speed;
+
+        _player.RB.linearVelocity = velocity;
     }
 }

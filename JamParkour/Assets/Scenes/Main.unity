@@ -355,6 +355,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 330585546}
+  - {fileID: 2046835977}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!143 &43674165
@@ -493,13 +494,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   _values: {fileID: 11400000, guid: 4b0e20f9039cb134bace2caf00321e05, type: 2}
+  _groundCheck: {fileID: 0}
   IsHoldingJump: 0
   IsJumping: 0
   LastPressedJumpTime: 0
-  LaunchDirection: {x: 0, y: 0, z: 0}
-  LaunchForce: 0
-  Velocity: {x: 0, y: 0, z: 0}
-  ImpulseVelocity: {x: 0, y: 0, z: 0}
 --- !u!114 &43674168
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2842,6 +2840,55 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2414659868041707236, guid: e4faf6f5fb8ebff4bb29c4b7bc24b711, type: 3}
   m_PrefabInstance: {fileID: 2723597}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2046835976
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2046835977}
+  - component: {fileID: 2046835978}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2046835977
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2046835976}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.553, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 43674162}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2046835978
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2046835976}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bd742e2146c4552867ef25e6a8204b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GroundCheck
+  _groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  _radius: 0.5
+  _distance: 0
 --- !u!1001 &3208738412144561426
 PrefabInstance:
   m_ObjectHideFlags: 0
