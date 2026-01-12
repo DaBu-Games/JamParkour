@@ -39,12 +39,20 @@ public class InAirState : IState
     {
         Vector3 input = _player.transform.right * _player.MoveInput.x + _player.transform.forward * _player.MoveInput.y;
 
-        float speed = _player.IsHoldingRun ? _values.RunSpeed : _values.WalkSpeed;
+        float airControl = 0.5f;
+        
+        float maxSpeed = _player.IsHoldingRun ? _values.MaxRunSpeed : _values.MaxWalkSpeed;
+        
+        Vector3 targetVelocity = input * (maxSpeed * airControl);
 
-        Vector3 velocity = _player.RB.linearVelocity;
-        velocity.x = input.x * speed;
-        velocity.z = input.z * speed;
+        Vector3 current = _player.RB.linearVelocity;
+        Vector3 horizontal = new Vector3(current.x, 0f, current.z);
+        
+        float acceleration = _player.IsHoldingRun ? _values.RunAcceleration : _values.WalkAcceleration;
+        acceleration *= 0.5f;
 
-        _player.RB.linearVelocity = velocity;
+        Vector3 newHorizontal = Vector3.MoveTowards(horizontal, targetVelocity, acceleration * airControl * Time.fixedDeltaTime);
+
+        _player.RB.linearVelocity = new Vector3(newHorizontal.x, current.y, newHorizontal.z);
     }
 }

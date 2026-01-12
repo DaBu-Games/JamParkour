@@ -18,7 +18,7 @@ public class PlayerManager : MonoBehaviour
     {
         stateMachine = new StateMachine();
 
-        idleState = new IdleState(player);
+        idleState = new IdleState(player, playerValues);
         inAirState = new InAirState(player, playerValues);
         jumpingState = new JumpingState(player, playerValues);
         runningState = new RunningState(player, playerValues);

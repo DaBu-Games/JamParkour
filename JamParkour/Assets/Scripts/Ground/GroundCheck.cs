@@ -4,9 +4,10 @@ using UnityEngine;
 public class GroundCheck : MonoBehaviour
 {
     [SerializeField] private LayerMask _groundLayer;
+    [SerializeField] private LayerMask _platformLayer;
     [SerializeField] float _radius = 0.3f;
-    [SerializeField] float _distance = 0.6f;
     
+    public Transform CurrenPlatform { get; private set; }
     public bool IsGrounded { get; private set; }
     public float LastOnGroundTime { get; private set; }
 
@@ -17,33 +18,33 @@ public class GroundCheck : MonoBehaviour
 
     private void CheckForGround()
     {
-        IsGrounded = Physics.SphereCast(
+        Collider[] hits = Physics.OverlapSphere(
             transform.position,
             _radius,
-            Vector3.down,
-            out RaycastHit hit,
-            _distance,
             _groundLayer,
             QueryTriggerInteraction.Ignore
         );
 
-        if (IsGrounded)
+        if (hits.Length > 0)
         {
+            IsGrounded = true;
             LastOnGroundTime = Time.time;
+            
+            if ((_platformLayer.value & (1 << hits[0].gameObject.layer)) != 0)
+                CurrenPlatform = hits[0].transform;
+            else
+                CurrenPlatform = null;
+        }
+        else
+        {
+            IsGrounded = false;
+            CurrenPlatform = null;
         }
     }
     
     private void OnDrawGizmos()
     {
-        Vector3 origin = transform.position;
-        Vector3 end = origin + Vector3.down * _distance;
-
         Gizmos.color = IsGrounded ? Color.green : Color.red;
-        
-        Gizmos.DrawWireSphere(origin, _radius);
-        
-        Gizmos.DrawWireSphere(end, _radius);
-        
-        Gizmos.DrawLine(origin, end);
+        Gizmos.DrawWireSphere(transform.position, _radius);
     }
 }

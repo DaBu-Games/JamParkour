@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 2914892451799843955}
   - component: {fileID: 4593031688974923675}
   - component: {fileID: 4722618390107587833}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BeatMovePlatform
-  m_TagString: Platform
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

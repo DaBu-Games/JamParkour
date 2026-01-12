@@ -3,12 +3,14 @@ using UnityEngine;
 public class WalkingState : IState
 {
     private PlayerController _player;
-    protected float _speed;
+    protected float _maxSpeed;
+    protected float _acceleration;
     
     public WalkingState(PlayerController player, PlayerValues values)
     {
         _player = player;
-        _speed = values.WalkSpeed;
+        _maxSpeed = values.MaxWalkSpeed;
+        _acceleration = values.WalkAcceleration;
     }
     public void OnEnterState() { }
 
@@ -25,10 +27,21 @@ public class WalkingState : IState
     {
         Vector3 input = _player.transform.right * _player.MoveInput.x + _player.transform.forward * _player.MoveInput.y;
 
-        Vector3 velocity = _player.RB.linearVelocity;
-        velocity.x = input.x * _speed;
-        velocity.z = input.z * _speed;
+        Vector3 targetVelocity = input * _maxSpeed;
 
-        _player.RB.linearVelocity = velocity;
+        Vector3 current = _player.RB.linearVelocity;
+        Vector3 horizontal = new Vector3(current.x, 0f, current.z);
+
+        Vector3 newHorizontal = Vector3.MoveTowards(
+            horizontal,
+            targetVelocity,
+            _acceleration * Time.fixedDeltaTime
+        );
+
+        _player.RB.linearVelocity = new Vector3(
+            newHorizontal.x,
+            current.y,
+            newHorizontal.z
+        );
     }
 }
