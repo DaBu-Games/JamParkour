@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6696360354795413702}
   - component: {fileID: 5501899115662819751}
   - component: {fileID: 4998143327329099874}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: BeatRotatePlatform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
